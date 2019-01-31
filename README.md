@@ -1,2 +1,6 @@
 # RetroPie-Toolkit
-Toolkit for setting up RetroPie  
+Shell Scripts used for setting up RetroPie 
+
+
+
+
