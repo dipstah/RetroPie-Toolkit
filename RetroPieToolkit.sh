@@ -266,5 +266,81 @@ function xboxdriverinstall(){
     sudo ./install.sh
     dialog --infobox "Install complete" 3 35 ; sleep 1
 }
+
+function gpio_shutdown(){
+    infoboxgpiosh= ""
+    infoboxgpiosh="${infoboxgpiosh}__________________________________________________\n"
+    infoboxgpiosh="${infoboxgpiosh}\n"
+    infoboxgpiosh="${infoboxgpiosh}Install GPIO shutdown script\n\n"
+    infoboxgpiosh="${infoboxgpiosh}\n"
+    infoboxgpiosh="${infoboxgpiosh}\n\n"
+
+    dialog --backtitle "RetroPie Toolkit GPIO Shutdown" \
+    --title "RetroPie Toolkit GPIO Shutdown" \
+    --yesno "${infoboxgpiosh}" 8 55
+    
+    # Get exit status
+    # 0 means user hit [yes] button.
+    # 1 means user hit [no] button.
+    # 255 means user hit [Esc] key.
+    response=$?
+    case $response in
+        0) gpio_sh ;;
+        1) dialog --infobox "Install GPIO shutdown script canceled" 3 45 ; sleep 3 ;;
+        255) dialog --infobox "Install GPIO shutdown script canceled" 3 45 ; sleep 3 ;;
+    esac
+    
+    infoboxgpiosh=
+}
+function gpio_sh(){
+    curl https://pie.8bitjunkie.net/shutdown/setup-shutdown.sh --output ~/setup-shutdown.sh
+    cd ~
+    sudo chmod +x setup-shutdown.sh
+    sudo ./setup-shutdown.sh
+    sudo sed -i 's/.*exit 0.*/#GPIO Shutdown script\n&/' /etc/rc.local 
+    sudo sed -i 's/.*exit 0.*/sudo python \/home\/pi\/scripts\/shutdown.py \&\n&/' /etc/rc.local 
+    sudo sed -i 's/.*exit 0.*/ \n&/' /etc/rc.local 
+    
+}
+
+function installbgm(){
+    infoboxbgm= ""
+    infoboxbgm="${infoboxbgm}__________________________________________________\n"
+    infoboxbgm="${infoboxbgm}\n"
+    infoboxbgm="${infoboxbgm}Install Background Music\n\n"
+    infoboxbgm="${infoboxbgm}\n"
+    infoboxbgm="${infoboxbgm}\n\n"
+
+    dialog --backtitle "RetroPie Toolkit BGM" \
+    --title "RetroPie Toolkit BGM" \
+    --yesno "${infoboxbgm}" 8 55
+    
+    # Get exit status
+    # 0 means user hit [yes] button.
+    # 1 means user hit [no] button.
+    # 255 means user hit [Esc] key.
+    response=$?
+    case $response in
+        0) bgm_sh ;;
+        1) dialog --infobox "Install BGM canceled" 3 45 ; sleep 3 ;;
+        255) dialog --infobox "Install BGM canceled" 3 45 ; sleep 3 ;;
+    esac
+    
+    infoboxbgm=
+}
+function bgm_sh(){
+    cd ~
+    git clone https://github.com/madmodder123/retropie_music_overlay.git
+    cd retropie_music_overlay/
+  	sudo chmod +x BGM_Install.sh 
+   	sudo ./BGM_Install.sh 
+    cp BGM.py ../
+    sudo chmod +x ./BGM.py
+
+    sudo sed -i 's/.*exit 0.*/#BackGroung Music\n&/' /etc/rc.local 
+    sudo sed -i 's/.*exit 0.*/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
+    sudo sed -i 's/.*exit 0.*/ \n&/' /etc/rc.local 
+
+}
 main_menu
 
