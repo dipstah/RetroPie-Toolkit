@@ -342,5 +342,5 @@ function bgm_sh(){
     sudo sed -i 's/.*exit 0.*/ \n&/' /etc/rc.local 
 
 }
-main_menu
+main_menu 
 
