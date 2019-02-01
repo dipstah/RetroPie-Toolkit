@@ -92,6 +92,7 @@ function boot_txt(){
             2 "Enable Boot Txt" \
             3 "Disable Raspberrys" \
             4 "Enabele Raspberrys" \
+            5 "Restore original cmdline.txt" \
             2>&1 > /dev/tty)
 
         case "$choice" in
@@ -99,6 +100,7 @@ function boot_txt(){
             2) cmdlinetxt enable  ;;
             3) raspberry disable  ;;
             4) raspberry enable  ;;
+            4) cmdlinetxt restore ;;
             *)  break ;;
         esac
     done
@@ -135,7 +137,14 @@ function cmdlinetxt(){
             sudo sed -i 's/console=tty3/console=tty1/g' /boot/cmdline.txt 
             sudo sed -i 's/ vt.global_cursor_default=0//g' /boot/cmdline.txt            
         fi
-
+    fi
+    if [ "$1" == "restore" ]; then
+        if [ ! -f "/boot/backup/cmdline.txt" ]; then
+            dialog --infobox "backup cmdline.txt not found in /boot/backup/" 3 50 ; sleep 3
+        else
+            dialog --infobox "Restoring Original cmdline.txt" 3 35 ; sleep 3
+            sudo cp /boot/backup/cmdline.txt /boot/cmdline.txt
+        fi
     fi
 }
 function raspberry(){
@@ -172,7 +181,7 @@ function raspberry(){
 
 function screen_resolution(){
     infoboxbootscrr= ""
-    infoboxbootscrr="${infoboxbootscrr}_______________________________________________________\n\n"
+    infoboxbootscrr="${infoboxbootscrr}______________________________________________________________________\n\n"
     infoboxbootscrr="${infoboxbootscrr}\n"
     infoboxbootscrr="${infoboxbootscrr}This Menu modifies /boot/config.txt file to help set the screen resolution\n\n"
     infoboxbootscrr="${infoboxbootscrr}\n"
@@ -191,8 +200,8 @@ function screen_resolution(){
         choice=$(dialog --backtitle "$BACKTITLE" --title " Set Resolution " \
             --ok-label OK --cancel-label Back \
             --menu "What action would you like to perform?" 25 55 20 \
-            1 "1024 X 600" \
-            2 "Restore Original" \
+            1 "1024 X 600 (S2Pi Z-0051)" \
+            2 "Restore Original config.txt" \
             2>&1 > /dev/tty)
 
         case "$choice" in
@@ -205,12 +214,57 @@ function screen_resolution(){
 }
 function resolution(){
     if [ "$1" == "restore" ]; then
-        dialog --infobox "Restoring Original confit.txt" 3 35 ; sleep 3
+        if [ ! -f "/boot/backup/config.txt" ]; then
+            dialog --infobox "backup config.txt not found in /boot/backup/" 3 50 ; sleep 3
+        else
+            dialog --infobox "Restoring Original config.txt" 3 35 ; sleep 3
+            sudo cp /boot/backup/config.txt /boot/config.txt
+        fi
     fi
     if [ "$1" == "1024600" ]; then
+        sudo cp --backup=numbered -v /boot/config.txt /boot/backup
+        sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup
         dialog --infobox "Setting Resolution 1024 X 600" 3 35 ; sleep 3
+        
+        sudo sed -i 's/.*hdmi_group=1.*/hdmi_cvt=1024 600 60 3 0 0 0\n&/' /boot/config.txt
+        sudo sed -i 's/#hdmi_group=1/hdmi_group=2/g' /boot/config.txt
+        sudo sed -i 's/#hdmi_mode=1/hdmi_mode=87/g' /boot/config.txt
     fi
 
+}
+
+function xbox_controller(){
+    infoboxxbox= ""
+    infoboxxbox="${infoboxxbox}______________________________________________________________________\n\n"
+    infoboxxbox="${infoboxxbox}\n"
+    infoboxxbox="${infoboxxbox}Install the Xbox One Controller Driver\n\n"
+    infoboxxbox="${infoboxxbox}\n"
+    infoboxxbox="${infoboxxbox}\n\n"
+
+    dialog --backtitle "RetroPie Toolkit Xbox One Controller" \
+    --title "RetroPie Toolkit Xbox One Controller" \
+    --yesno "${infoboxxbox}" 10 75
+    
+    # Get exit status
+    # 0 means user hit [yes] button.
+    # 1 means user hit [no] button.
+    # 255 means user hit [Esc] key.
+    response=$?
+    case $response in
+        0) xboxdriverinstall ;;
+        1) dialog --infobox "Driver Installed Canceled" 3 35 ; sleep 3 ;;
+        255) dialog --infobox "Driver Installed Canceled" 3 35 ; sleep 3 ;;
+    esac
+    
+    infoboxxbox=
+}
+function xboxdriverinstall(){
+    dialog --infobox "Installing xpadneo" 3 35 ; sleep 1
+    cd ~
+    git clone https://github.com/atar-axis/xpadneo.git
+    cd xpadneo
+    sudo ./install.sh
+    dialog --infobox "Install complete" 3 35 ; sleep 1
 }
 main_menu
 
