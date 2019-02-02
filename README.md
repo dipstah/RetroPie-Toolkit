@@ -2,10 +2,9 @@
 Shell Scripts used for setting up RetroPie 
 
 
-####Change Log
+## Change Log
 
-1/31/19
-
+**1/31/19**
 - Added: restore original for config.txt and codlin.txt
 - Added: Resolution 1024X600 for 7” display Kit (without Touch Screen) SKU:Z-0051
   - https://www.wiki.52pi.com/index.php?title=7-Inch-1024x600_Display_Kit_(without_Touch_Screen)_SKU:Z-0051
@@ -16,8 +15,7 @@ Shell Scripts used for setting up RetroPie
 - Added: Background music 
   - https://github.com/madmodder123/retropie_music_overlay
 
-2/1/19
-
+**2/1/19**
 - Added: Bezel Project 
 - Added: Royalty Free Arcade Music from 
   - https://patrickdearteaga.com/arcade-music/ 
