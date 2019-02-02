@@ -1,5 +1,5 @@
 # RetroPie-Toolkit
-Shell Script for setting up RetroPie 
+Shell Script for configuring RetroPie 
 
 I am new to the RetroPie community and have been downloading pre built images. This got me interested in building my own
 image with what I wanted, some images had features I really like but not all of them had everything. I started this script in the
@@ -17,6 +17,18 @@ I am useing there work in my script.
 @RetroHursty69 for all the Themes and work you have done<br/>
 @Shakz76 for the Idea and Eazy-Hax-RetroPie-Toolkit<br/> 
 Patric Arteaga for the Royalty Free Music<br/>
+
+## What does the script do? 
+- automates enabling/disabling boot text , Raspberry's <br/>
+- set screen resolution 1024x600 for the 7" display from 52Pi  <br/>
+- install Xbox One Driver xpadneo <br/>
+- Install GPIO Shutdown script from 8bitjunkie <br/>
+- Setup Adafruit's i2s Audio Amp Driver <br/>
+- Install BGM  <br/>
+- Add Bezel Project to RetroPie  <br/>
+- Add Hursty Themes <br/>
+
+![alt text](http://www.dippydawg.net/images/MainMenu.png)
 
 
 ## To Do
