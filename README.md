@@ -11,13 +11,13 @@ feel free to use my script. I hope it is usefull for others.
 Thanks to everyone who has put in hard work on developing and modding RetroPie and special thanks to the ones whom 
 I am useing there work in my script. 
 
-@atar-axis for xpadneo Xbox one Driver<br/>
-8bitjunkie for gpio shutdown<br/>
-@madmodder123 for BGM<br/>
-@thebezelproject for the awesome bezels<br/>
-@RetroHursty69 for all the Themes and work you have done<br/>
-@Shakz76 for the Idea and Eazy-Hax-RetroPie-Toolkit<br/> 
-Patric Arteaga for the Royalty Free Music<br/>
+[@atar-axis](https://github.com/atar-axis/xpadneo) for xpadneo Xbox one Driver<br/>
+[8bitjunkie](https://pie.8bitjunkie.net/retropie-shutdown-and-startup-switch-the-easy-way) for gpio shutdown<br/>
+[@madmodder123](https://github.com/madmodder123/retropie_music_overlay) for BGM<br/>
+[@thebezelproject](https://github.com/thebezelproject/BezelProject) for the awesome bezels<br/>
+[@RetroHursty69](https://github.com/RetroHursty69/HurstyThemes) for all the Themes and work you have done<br/>
+[@Shakz76](https://github.com/Shakz76/Eazy-Hax-RetroPie-Toolkit) for the Idea and Eazy-Hax-RetroPie-Toolkit<br/> 
+[Patric Arteaga](https://patrickdearteaga.com/arcade-music/) for the Royalty Free Music<br/>
 
 ## What does the script do? 
 - automates enabling/disabling boot text , Raspberry's <br/>
