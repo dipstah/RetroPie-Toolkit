@@ -32,4 +32,4 @@ Shell Scripts used for setting up RetroPie
 - Change: BGM.zip to BGM.tar.gz for royalty free music
 - Fixed: Line detection for rc.local where the script would add the GPIO and BGM python scripts
 - Fixed: Spelling in BGM function
-- Fixed: Extraction of BGM archive for Royalty Free Music
+- Fixed: Extraction of BGM archive for Royalty Free Musi
