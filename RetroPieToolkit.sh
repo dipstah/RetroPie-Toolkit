@@ -39,6 +39,7 @@ function main_menu() {
             5 "Setup I2S Sound Bonnet" \
             6 "Install Background Music" \
             7 "Bezel Project" \
+            8 "Hursty Themes" \
             2>&1 > /dev/tty)
 
         case "$choice" in
@@ -49,6 +50,7 @@ function main_menu() {
             5) i2s ;;
             6) installbgm ;;
             7) bezelproject ;;
+            8) hurstythemes ;;
             *)  break ;;
         esac
     done
@@ -56,14 +58,14 @@ function main_menu() {
 
 function boot_txt(){
     infoboxboot= ""
-    infoboxboot="${infoboxboot}_______________________________________________________\n\n"
+    infoboxboot="${infoboxboot}________________________________________________________________\n\n"
     infoboxboot="${infoboxboot}\n"
     infoboxboot="${infoboxboot}This will modify the cmdline.txt of the RaspberryPie\n\n"
     infoboxboot="${infoboxboot}a Backup of the original files will be copied ~/rpicfgbackup folder\n"
     infoboxboot="${infoboxboot}and /boot/backup \n"
     infoboxboot="${infoboxboot}\n"
-    infoboxboot="${infoboxboot}If something should go wrong you can restore the file from the boot partition on \n"
-    infoboxboot="${infoboxboot}and PC or Mac\n"
+    infoboxboot="${infoboxboot}If something should go wrong you can restore the file from the boot partition on"
+    infoboxboot="${infoboxboot} a PC, Mac or computer of your choice\n"
     infoboxboot="${infoboxboot}\n"
     infoboxboot="${infoboxboot}\n\n"
 
@@ -350,7 +352,7 @@ function bgm_sh(){
         git clone https://github.com/madmodder123/retropie_music_overlay.git
         cd retropie_music_overlay/
         sudo chmod +x BGM_Install.sh 
-        sudo ./BGM_Install.sh 
+        ./BGM_Install.sh 
         cp BGM.py ../
         cd ../
         sudo chmod +x ./BGM.py
@@ -362,29 +364,55 @@ function bgm_sh(){
 }
 
 function i2s(){
-    infoboxi2s= ""
-    infoboxi2s="${infoboxi2s}__________________________________________________\n"
-    infoboxi2s="${infoboxi2s}\n"
-    infoboxi2s="${infoboxi2s}Install Adafruit i2s Bonnet Sound Driver\n\n"
-    infoboxi2s="${infoboxi2s}\n"
-    infoboxi2s="${infoboxi2s}\n\n"
+    testi2s=`cat "/boot/config.txt"`
+    if [[ "$testi2s" == *"dtoverlay=i2s-mmap"* ]]; then
+        yesno= ""
+        yesno="${yesno}__________________________________________________\n"
+        yesno="${yesno}\n"
+        yesno="${yesno}i2S Driver detected do you want to continue\n\n"
+        yesno="${yesno}If this is the second run select Yes\n"
+        yesno="${yesno}\n\n"
 
-    dialog --backtitle "RetroPie Toolkit i2s" \
-    --title "RetroPie Toolkit i2s" \
-    --yesno "${infoboxi2s}" 8 55
+        dialog --backtitle "RetroPie Toolkit i2s" \
+        --title "RetroPie Toolkit i2s" \
+        --yesno "${yesno}" 10 55
+        
+        # Get exit status
+        # 0 means user hit [yes] button.
+        # 1 means user hit [no] button.
+        # 255 means user hit [Esc] key.
+        response=$?
+        case $response in
+            0) i2s_sh ;;
+            1) dialog --infobox "i2s Driver Install Canceled" 3 35 ; sleep 3 ;;
+            255) dialog --infobox "i2s Driver Install Canceled" 3 35 ; sleep 3 ;;
+        esac
+        yesno=
+    else
+        infoboxi2s= ""
+        infoboxi2s="${infoboxi2s}__________________________________________________\n"
+        infoboxi2s="${infoboxi2s}\n"
+        infoboxi2s="${infoboxi2s}Install Adafruit i2s Bonnet Sound Driver\n\n"
+        infoboxi2s="${infoboxi2s}this script should be executed twice \n"
+        infoboxi2s="${infoboxi2s}Install > Reboot > run second time \n"
+        infoboxi2s="${infoboxi2s}\n\n"
+
+        dialog --backtitle "RetroPie Toolkit i2s" \
+        --title "RetroPie Toolkit i2s" \
+        --yesno "${infoboxi2s}" 8 55
     
-    # Get exit status
-    # 0 means user hit [yes] button.
-    # 1 means user hit [no] button.
-    # 255 means user hit [Esc] key.
-    response=$?
-    case $response in
-        0) i2s_sh ;;
-        1) dialog --infobox "Install i2s driver canceled" 3 45 ; sleep 3 ;;
-        255) dialog --infobox "Install i2s driver canceled" 3 45 ; sleep 3 ;;
-    esac
-    
-    infoboxi2s=
+        # Get exit status
+        # 0 means user hit [yes] button.
+        # 1 means user hit [no] button.
+        # 255 means user hit [Esc] key.
+        response=$?
+        case $response in
+            0) i2s_sh ;;
+            1) dialog --infobox "i2s Driver Install Canceled" 3 45 ; sleep 3 ;;
+            255) dialog --infobox "i2s Driver Install Canceled" 3 45 ; sleep 3 ;;
+        esac
+        infoboxi2s=
+    fi
 }
 function i2s_sh(){
     if [ ! -d "~/rpicfgbackup" ]; then
@@ -393,13 +421,9 @@ function i2s_sh(){
     if [ ! -d "/boot/backup" ]; then
         sudo mkdir -p /boot/backup
     fi
-
-    testi2s=`cat "/boot/config.txt"`
-    if [[ "$testi2s" == *"dtoverlay=i2s-mmap"* ]]; then
-        dialog --infobox "i2s ampliphier already installed" 3 50 ; sleep 3
-    else    
-        curl -sS https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/i2samp.sh | bash
-    fi
+    sudo cp --backup=numbered -v /boot/config.txt /boot/backup
+    sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup
+    curl -sS https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/i2samp.sh | bash
 }
 
 function bezelproject(){
@@ -410,19 +434,35 @@ function bezelproject(){
     infoboxbezel="${infoboxbezel}from the configuration menu in RestroPie\n"
     infoboxbezel="${infoboxbezel}\n"
     infoboxbezel="${infoboxbezel}\n"
-    infoboxbezel="${infoboxbezel}\n"
-    infoboxbezel="${infoboxbezel}\n"
-    infoboxbezel="${infoboxbezel}\n"
     infoboxbezel="${infoboxbezel}\n\n"
 
     dialog --backtitle "RetroPie Toolkit Bezel Project" \
     --title "RetroPie Toolkit Bezel Project" \
-    --msgbox "${infoboxbezel}" 15 75
+    --msgbox "${infoboxbezel}" 10 75
     
     cd /home/pi/RetroPie/retropiemenu/
 	wget https://raw.githubusercontent.com/thebezelproject/BezelProject/master/bezelproject.sh
 	chmod +x "bezelproject.sh"
     infoboxbezel=
 }
-main_menu 
 
+function hurstythemes(){
+    infoboxhursty= ""
+    infoboxhursty="${infoboxhursty}_____________________________________________________________________\n\n"
+    infoboxhursty="${infoboxhursty}\n"
+    infoboxhursty="${infoboxhursty}This script will install the 3rd party script installer\n\n"
+    infoboxhursty="${infoboxhursty}for Hursty Themes.\n"
+    infoboxhursty="${infoboxhursty}\n"
+    infoboxhursty="${infoboxhursty}These themes are to be used on a Raspberry Pi / RetroPie build"
+    infoboxhursty="${infoboxhursty}\n\n"
+
+    dialog --backtitle "RetroPie Toolkit Hursty Themes" \
+    --title "RetroPie Toolkit Hursty Themes" \
+    --msgbox "${infoboxhursty}" 12 75
+    
+    wget https://raw.githubusercontent.com/RetroHursty69/HurstyThemes/master/install.sh
+    chmod +x "install.sh"
+    ./install.sh
+    infoboxhursty=
+}
+main_menu 
