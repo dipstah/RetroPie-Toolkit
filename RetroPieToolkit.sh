@@ -31,20 +31,14 @@ function main_menu() {
     while true; do
         choice=$(dialog --backtitle "$BACKTITLE" --title " MAIN MENU " \
             --ok-label OK --cancel-label Exit \
-            --menu "What action would you like to perform?" 25 75 20 \
+            --menu "What action would you like to perform?" 15 55 20 \
             1 "Disable/Enable BootupTxt/Raspberrys" \
             2 "Screen Resolution" \
             3 "Xbox One Controller Drivers" \
             4 "GPIO Shutdown Powerbutton" \
-            5 "Install Background Music" \
-            6 "Bezel Project" \
-            7 "Setup I2S Sound Bonnet" \
-            8 " " \
-            9 " " \
-            10 " " \
-            11 " " \
-            12 " " \
-            13 " " \
+            5 "Setup I2S Sound Bonnet" \
+            6 "Install Background Music" \
+            7 "Bezel Project" \
             2>&1 > /dev/tty)
 
         case "$choice" in
@@ -52,20 +46,13 @@ function main_menu() {
             2) screen_resolution  ;;
             3) xbox_controller ;;
             4) gpio_shutdown ;;
-            5) installbgm ;;
-            6) bezelproject ;;
-            7) i2s ;;
-            8) n ;;
-            9) a ;;
-            10) o ;;
-            11) a ;;
-            12) x ;;
-            13) u ;;
+            5) i2s ;;
+            6) installbgm ;;
+            7) bezelproject ;;
             *)  break ;;
         esac
     done
 }
-
 
 function boot_txt(){
     infoboxboot= ""
@@ -297,9 +284,9 @@ function gpio_sh(){
     cd ~
     sudo chmod +x setup-shutdown.sh
     sudo ./setup-shutdown.sh
-    sudo sed -i 's/.*exit 0.*/#GPIO Shutdown script\n&/' /etc/rc.local 
-    sudo sed -i 's/.*exit 0.*/sudo python \/home\/pi\/scripts\/shutdown.py \&\n&/' /etc/rc.local 
-    sudo sed -i 's/.*exit 0.*/ \n&/' /etc/rc.local 
+    sudo sed -i 's/.exit 0.*/#GPIO Shutdown script\n&/' /etc/rc.local 
+    sudo sed -i 's/.exit 0.*/sudo python \/home\/pi\/scripts\/shutdown.py \&\n&/' /etc/rc.local 
+    sudo sed -i 's/.exit 0.*/ \n&/' /etc/rc.local 
     
 }
 
@@ -336,11 +323,64 @@ function bgm_sh(){
    	sudo ./BGM_Install.sh 
     cp BGM.py ../
     sudo chmod +x ./BGM.py
+    mkdir BGM
 
-    sudo sed -i 's/.*exit 0.*/#BackGroung Music\n&/' /etc/rc.local 
-    sudo sed -i 's/.*exit 0.*/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
-    sudo sed -i 's/.*exit 0.*/ \n&/' /etc/rc.local 
+    sudo sed -i 's/.exit 0.*/#BackGround Music\n&/' /etc/rc.local 
+    sudo sed -i 's/.exit 0.*/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
+    sudo sed -i 's/.exit 0.*/ \n&/' /etc/rc.local 
 
+}
+
+function i2s(){
+    infoboxi2s= ""
+    infoboxi2s="${infoboxi2s}__________________________________________________\n"
+    infoboxi2s="${infoboxi2s}\n"
+    infoboxi2s="${infoboxi2s}Install Adafruit i2s Bonnet Sound Driver\n\n"
+    infoboxi2s="${infoboxi2s}\n"
+    infoboxi2s="${infoboxi2s}\n\n"
+
+    dialog --backtitle "RetroPie Toolkit i2s" \
+    --title "RetroPie Toolkit i2s" \
+    --yesno "${infoboxi2s}" 8 55
+    
+    # Get exit status
+    # 0 means user hit [yes] button.
+    # 1 means user hit [no] button.
+    # 255 means user hit [Esc] key.
+    response=$?
+    case $response in
+        0) i2s_sh ;;
+        1) dialog --infobox "Install i2s driver canceled" 3 45 ; sleep 3 ;;
+        255) dialog --infobox "Install i2s driver canceled" 3 45 ; sleep 3 ;;
+    esac
+    
+    infoboxi2s=
+}
+function i2s_sh(){
+    curl -sS https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/i2samp.sh | bash
+}
+
+function bezelproject(){
+    infoboxbezel= ""
+    infoboxbezel="${infoboxbezel}_______________________________________________________\n\n"
+    infoboxbezel="${infoboxbezel}\n"
+    infoboxbezel="${infoboxbezel}This will add the Bezel Project to RetroPie and can be accessed\n\n"
+    infoboxbezel="${infoboxbezel}from the configuration menu in RestroPie\n"
+    infoboxbezel="${infoboxbezel}\n"
+    infoboxbezel="${infoboxbezel}\n"
+    infoboxbezel="${infoboxbezel}\n"
+    infoboxbezel="${infoboxbezel}\n"
+    infoboxbezel="${infoboxbezel}\n"
+    infoboxbezel="${infoboxbezel}\n\n"
+
+    dialog --backtitle "RetroPie Toolkit Bezel Project" \
+    --title "RetroPie Toolkit Bezel Project" \
+    --msgbox "${infoboxbezel}" 15 75
+    
+    cd /home/pi/RetroPie/retropiemenu/
+	wget https://raw.githubusercontent.com/thebezelproject/BezelProject/master/bezelproject.sh
+	chmod +x "bezelproject.sh"
+    infoboxbezel=
 }
 main_menu 
 
