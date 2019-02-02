@@ -33,6 +33,7 @@ Shell Scripts used for setting up RetroPie
 - Fixed: Line detection for rc.local where the script would add the GPIO and BGM python scripts
 - Fixed: Spelling in BGM function
 - Fixed: Extraction of BGM archive for Royalty Free Music
+- 
 
 
 
