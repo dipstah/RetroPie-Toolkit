@@ -74,7 +74,7 @@ function boot_txt(){
     while true; do
         choice=$(dialog --backtitle "$BACKTITLE" --title " Boot Txt " \
             --ok-label OK --cancel-label Back \
-            --menu "What action would you like to perform?" 25 55 20 \
+            --menu "What action would you like to perform?" 13 55 20 \
             1 "Disable Boot txt" \
             2 "Enable Boot Txt" \
             3 "Disable Raspberrys" \
@@ -186,7 +186,7 @@ function screen_resolution(){
         while true; do
         choice=$(dialog --backtitle "$BACKTITLE" --title " Set Resolution " \
             --ok-label OK --cancel-label Back \
-            --menu "What action would you like to perform?" 25 55 20 \
+            --menu "What action would you like to perform?" 10 55 20 \
             1 "1024 X 600 (S2Pi Z-0051)" \
             2 "Restore Original config.txt" \
             2>&1 > /dev/tty)
@@ -200,6 +200,13 @@ function screen_resolution(){
     infoboxbootscrr=
 }
 function resolution(){
+    
+    if [ ! -d "~/rpicfgbackup" ]; then
+        sudo mkdir -p ~/rpicfgbackup
+    fi
+    if [ ! -d "/boot/backup" ]; then
+        sudo mkdir -p /boot/backup
+    fi
     if [ "$1" == "restore" ]; then
         if [ ! -f "/boot/backup/config.txt" ]; then
             dialog --infobox "backup config.txt not found in /boot/backup/" 3 50 ; sleep 3
@@ -209,20 +216,24 @@ function resolution(){
         fi
     fi
     if [ "$1" == "1024600" ]; then
-        sudo cp --backup=numbered -v /boot/config.txt /boot/backup
-        sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup
-        dialog --infobox "Setting Resolution 1024 X 600" 3 35 ; sleep 3
+        testresolution=`cat "/boot/config.txt"`
+        if [[ "$testresolution" == *"hdmi_cvt=1024 600 60 3 0 0 0"* ]]; then
+            dialog --infobox "Resolution already set" 3 30 ; sleep 3
+        else
+            sudo cp --backup=numbered -v /boot/config.txt /boot/backup
+            sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup
+            dialog --infobox "Setting Resolution 1024 X 600" 3 35 ; sleep 3
         
-        sudo sed -i 's/.*hdmi_group=1.*/hdmi_cvt=1024 600 60 3 0 0 0\n&/' /boot/config.txt
-        sudo sed -i 's/#hdmi_group=1/hdmi_group=2/g' /boot/config.txt
-        sudo sed -i 's/#hdmi_mode=1/hdmi_mode=87/g' /boot/config.txt
+            sudo sed -i 's/.*hdmi_group=1.*/hdmi_cvt=1024 600 60 3 0 0 0\n&/' /boot/config.txt
+            sudo sed -i 's/#hdmi_group=1/hdmi_group=2/g' /boot/config.txt
+            sudo sed -i 's/#hdmi_mode=1/hdmi_mode=87/g' /boot/config.txt
+        fi
     fi
-
 }
 
 function xbox_controller(){
     infoboxxbox= ""
-    infoboxxbox="${infoboxxbox}______________________________________________________________________\n\n"
+    infoboxxbox="${infoboxxbox}__________________________________________________\n"
     infoboxxbox="${infoboxxbox}\n"
     infoboxxbox="${infoboxxbox}Install the Xbox One Controller Driver\n\n"
     infoboxxbox="${infoboxxbox}\n"
@@ -230,7 +241,7 @@ function xbox_controller(){
 
     dialog --backtitle "RetroPie Toolkit Xbox One Controller" \
     --title "RetroPie Toolkit Xbox One Controller" \
-    --yesno "${infoboxxbox}" 10 75
+    --yesno "${infoboxxbox}" 8 55
     
     # Get exit status
     # 0 means user hit [yes] button.
@@ -266,7 +277,7 @@ function gpio_shutdown(){
 
     dialog --backtitle "RetroPie Toolkit GPIO Shutdown" \
     --title "RetroPie Toolkit GPIO Shutdown" \
-    --yesno "${infoboxgpiosh}" 8 55
+    --yesno "${infoboxgpiosh}" 10 60
     
     # Get exit status
     # 0 means user hit [yes] button.
@@ -285,16 +296,19 @@ function gpio_sh(){
     if [ ! -d "~/rpicfgbackup" ]; then
         sudo mkdir -p ~/rpicfgbackup
     fi
-    
-    sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup
-    curl https://pie.8bitjunkie.net/shutdown/setup-shutdown.sh --output ~/setup-shutdown.sh
-    cd ~
-    sudo chmod +x setup-shutdown.sh
-    sudo ./setup-shutdown.sh
-    sudo sed -i 's/.exit 0.*/#GPIO Shutdown script\n&/' /etc/rc.local 
-    sudo sed -i 's/.exit 0.*/sudo python \/home\/pi\/scripts\/shutdown.py \&\n&/' /etc/rc.local 
-    sudo sed -i 's/.exit 0.*/ \n&/' /etc/rc.local 
-    
+    testgpio=`cat "/etc/rc.local"`
+    if [[ "$testgpio" == *"shutdown.py"* ]]; then
+        dialog --infobox "GPIO Shutdown script already installed" 3 50 ; sleep 3
+    else    
+        sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup
+        curl https://pie.8bitjunkie.net/shutdown/setup-shutdown.sh --output ~/setup-shutdown.sh
+        cd ~
+        sudo chmod +x setup-shutdown.sh
+        sudo ./setup-shutdown.sh
+        sudo sed -i 's/^exit 0/#GPIO Shutdown script\n&/' /etc/rc.local 
+        sudo sed -i 's/^exit 0/sudo python \/home\/pi\/scripts\/shutdown.py \&\n&/' /etc/rc.local 
+        sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local 
+    fi
 }
 
 function installbgm(){
@@ -323,21 +337,28 @@ function installbgm(){
     infoboxbgm=
 }
 function bgm_sh(){
-    cd ~
-    git clone https://github.com/madmodder123/retropie_music_overlay.git
-    cd retropie_music_overlay/
-  	sudo chmod +x BGM_Install.sh 
-   	sudo ./BGM_Install.sh 
-    unzip ~/RetroPie-Toolbox/BGM.zip -d ~/
-    cp BGM.py ../
-    cd ../
-    sudo chmod +x ./BGM.py
-    rm -R __MACOSX
+    if [ ! -d "~/rpicfgbackup" ]; then
+        sudo mkdir -p ~/rpicfgbackup
+    fi
+    testbgm=`cat "/etc/rc.local"`
+    if [[ "$testbgm" == *"BGM.py"* ]]; then
+        dialog --infobox "BGM already installed" 3 30 ; sleep 3
+    else
+        tar -zxvf ./BGM.tar.gz -C ../
+        sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup
+        cd ~
+        git clone https://github.com/madmodder123/retropie_music_overlay.git
+        cd retropie_music_overlay/
+        sudo chmod +x BGM_Install.sh 
+        sudo ./BGM_Install.sh 
+        cp BGM.py ../
+        cd ../
+        sudo chmod +x ./BGM.py
    
-    sudo sed -i 's/.exit 0.*/#BackGround Music\n&/' /etc/rc.local 
-    sudo sed -i 's/.exit 0.*/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
-    sudo sed -i 's/.exit 0.*/ \n&/' /etc/rc.local 
-
+        sudo sed -i 's/^exit 0/#BackGround Music\n&/' /etc/rc.local 
+        sudo sed -i 's/^exit 0/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
+        sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local
+    fi
 }
 
 function i2s(){
@@ -366,7 +387,19 @@ function i2s(){
     infoboxi2s=
 }
 function i2s_sh(){
-    curl -sS https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/i2samp.sh | bash
+    if [ ! -d "~/rpicfgbackup" ]; then
+        sudo mkdir -p ~/rpicfgbackup
+    fi
+    if [ ! -d "/boot/backup" ]; then
+        sudo mkdir -p /boot/backup
+    fi
+
+    testi2s=`cat "/boot/config.txt"`
+    if [[ "$testi2s" == *"dtoverlay=i2s-mmap"* ]]; then
+        dialog --infobox "i2s ampliphier already installed" 3 50 ; sleep 3
+    else    
+        curl -sS https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/i2samp.sh | bash
+    fi
 }
 
 function bezelproject(){
