@@ -258,8 +258,10 @@ function gpio_shutdown(){
     infoboxgpiosh= ""
     infoboxgpiosh="${infoboxgpiosh}__________________________________________________\n"
     infoboxgpiosh="${infoboxgpiosh}\n"
-    infoboxgpiosh="${infoboxgpiosh}Install GPIO shutdown script\n\n"
+    infoboxgpiosh="${infoboxgpiosh}This script will install a python script to enable \n"
+    infoboxgpiosh="${infoboxgpiosh}shutdown of Raspberry Pi upon PIN5/GPIO3 Logic LOW\n"
     infoboxgpiosh="${infoboxgpiosh}\n"
+    infoboxgpiosh="${infoboxgpiosh}Visit http://pie.8bitjunkie.net for more information\n"
     infoboxgpiosh="${infoboxgpiosh}\n\n"
 
     dialog --backtitle "RetroPie Toolkit GPIO Shutdown" \
@@ -280,6 +282,11 @@ function gpio_shutdown(){
     infoboxgpiosh=
 }
 function gpio_sh(){
+    if [ ! -d "~/rpicfgbackup" ]; then
+        sudo mkdir -p ~/rpicfgbackup
+    fi
+    
+    sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup
     curl https://pie.8bitjunkie.net/shutdown/setup-shutdown.sh --output ~/setup-shutdown.sh
     cd ~
     sudo chmod +x setup-shutdown.sh
@@ -321,10 +328,12 @@ function bgm_sh(){
     cd retropie_music_overlay/
   	sudo chmod +x BGM_Install.sh 
    	sudo ./BGM_Install.sh 
+    unzip ~/RetroPie-Toolbox/BGM.zip -d ~/
     cp BGM.py ../
+    cd ../
     sudo chmod +x ./BGM.py
-    mkdir BGM
-
+    rm -R __MACOSX
+   
     sudo sed -i 's/.exit 0.*/#BackGround Music\n&/' /etc/rc.local 
     sudo sed -i 's/.exit 0.*/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
     sudo sed -i 's/.exit 0.*/ \n&/' /etc/rc.local 
