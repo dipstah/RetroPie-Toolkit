@@ -11,12 +11,12 @@ feel free to use my script. I hope it is usefull for others.
 Thanks to everyone who has put in hard work on developing and modding RetroPie and special thanks to the ones whom 
 I am useing there work in my script. 
 
-@atar-axis for xpadneo Xbox one Driver
-@8bitjunkie for gpio shutdown 
-@madmodder123 for BGM 
-@RetroHursty69 for all the Themes and work you have done
-@Shakz76 for the Idea and Eazy-Hax-RetroPie-Toolkit. 
-Patric Arteaga for the Royalty Free Music
+@atar-axis for xpadneo Xbox one Driver<br/>
+@8bitjunkie for gpio shutdown<br/>
+@madmodder123 for BGM<br/> 
+@RetroHursty69 for all the Themes and work you have done<br/>
+@Shakz76 for the Idea and Eazy-Hax-RetroPie-Toolkit<br/> 
+Patric Arteaga for the Royalty Free Music<br/>
 
 
 ## To DO
