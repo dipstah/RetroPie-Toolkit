@@ -13,7 +13,8 @@ I am useing there work in my script.
 
 @atar-axis for xpadneo Xbox one Driver<br/>
 8bitjunkie for gpio shutdown<br/>
-@madmodder123 for BGM<br/> 
+@madmodder123 for BGM<br/>
+@thebezelproject for the awesome bezels<br/>
 @RetroHursty69 for all the Themes and work you have done<br/>
 @Shakz76 for the Idea and Eazy-Hax-RetroPie-Toolkit<br/> 
 Patric Arteaga for the Royalty Free Music<br/>
