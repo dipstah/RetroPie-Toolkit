@@ -12,7 +12,7 @@ Thanks to everyone who has put in hard work on developing and modding RetroPie a
 I am useing there work in my script. 
 
 @atar-axis for xpadneo Xbox one Driver<br/>
-@8bitjunkie for gpio shutdown<br/>
+8bitjunkie for gpio shutdown<br/>
 @madmodder123 for BGM<br/> 
 @RetroHursty69 for all the Themes and work you have done<br/>
 @Shakz76 for the Idea and Eazy-Hax-RetroPie-Toolkit<br/> 
@@ -39,6 +39,7 @@ Patric Arteaga for the Royalty Free Music<br/>
 - Add Eazy-Hax-RetroPie-Toolkit
 - detect if Toolkit is running from retropie menu if not ask to install
 - Set Volume for BGM 
+- Add Icon for Bezel Project in RetroPie config menu
 
 ## Change Log
 
