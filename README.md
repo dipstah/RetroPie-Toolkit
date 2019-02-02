@@ -38,6 +38,7 @@ Patric Arteaga for the Royalty Free Music<br/>
 - menu item for GPIO Shutdown with icon
 - Add Eazy-Hax-RetroPie-Toolkit
 - detect if Toolkit is running from retropie menu if not ask to install
+- Set Volume for BGM 
 
 ## Change Log
 
