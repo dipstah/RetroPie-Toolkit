@@ -17,7 +17,7 @@ I am useing there work in my script.
 [@thebezelproject](https://github.com/thebezelproject/BezelProject) for the awesome bezels<br/>
 [@RetroHursty69](https://github.com/RetroHursty69/HurstyThemes) for all the Themes and work you have done<br/>
 [@Shakz76](https://github.com/Shakz76/Eazy-Hax-RetroPie-Toolkit) for the Idea and Eazy-Hax-RetroPie-Toolkit<br/> 
-[Patric Arteaga](ttps://patrickdearteaga.com/arcade-music/) for the Royalty Free Music<br/>
+[Patric Arteaga](https://patrickdearteaga.com/arcade-music/) for the Royalty Free Music<br/>
 
 ## What does the script do? 
 - automates enabling/disabling boot text , Raspberry's <br/>
