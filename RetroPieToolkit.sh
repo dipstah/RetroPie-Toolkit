@@ -98,10 +98,10 @@ function boot_txt(){
 function cmdlinetxt(){
 
     if [ ! -d "~/rpicfgbackup" ]; then
-        sudo mkdir -p ~/rpicfgbackup
+        sudo mkdir -p ~/rpicfgbackup &> /dev/null
     fi
     if [ ! -d "/boot/backup" ]; then
-        sudo mkdir -p /boot/backup
+        sudo mkdir -p /boot/backup &> /dev/null
     fi
     
     if [ "$1" == "disable" ]; then
@@ -109,8 +109,8 @@ function cmdlinetxt(){
         if [[ "$testconsole" == *"tty3"* ]]; then
             dialog --infobox "boot txt already disabled" 3 30 ; sleep 3
         else    
-            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup
-            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup
+            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup &> /dev/null
+            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup &> /dev/null
             sudo sed -i 's/console=tty1/console=tty3/g' /boot/cmdline.txt
             sudo sed -i 's/$/ vt.global_cursor_default=0/' /boot/cmdline.txt
         fi   
@@ -121,8 +121,8 @@ function cmdlinetxt(){
         if [[ "$testconsole" == *"tty1"* ]]; then
             dialog --infobox "boot txt already enabled" 3 30 ; sleep 3
         else
-            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup
-            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup
+            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup &> /dev/null
+            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup &> /dev/null
             sudo sed -i 's/console=tty3/console=tty1/g' /boot/cmdline.txt 
             sudo sed -i 's/ vt.global_cursor_default=0//g' /boot/cmdline.txt            
         fi
@@ -139,10 +139,10 @@ function cmdlinetxt(){
 function raspberry(){
 
     if [ ! -d "~/rpicfgbackup" ]; then
-        sudo mkdir -p ~/rpicfgbackup
+        sudo mkdir -p ~/rpicfgbackup &> /dev/null
     fi
     if [ ! -d "/boot/backup" ]; then
-        sudo mkdir -p /boot/backup
+        sudo mkdir -p /boot/backup &> /dev/null
     fi
     
     if [ "$1" == "disable" ]; then
@@ -150,8 +150,8 @@ function raspberry(){
         if [[ "$testconsole" == *"logo.nologo"* ]]; then
             dialog --infobox "Rasberry's already disabled" 3 30 ; sleep 3
         else
-            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup
-            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup
+            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup &> /dev/null
+            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup &> /dev/null
             sudo sed -i 's/$/ logo.nologo/' /boot/cmdline.txt
         fi
     fi
@@ -161,8 +161,8 @@ function raspberry(){
         if [[ "$testconsole" != *"logo.nologo"* ]]; then
             dialog --infobox "Rasberry's already enabled" 3 35 ; sleep 3
         else
-            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup
-            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup
+            sudo cp --backup=numbered -v /boot/cmdline.txt /boot/backup &> /dev/null
+            sudo cp --backup=numbered -v /boot/cmdline.txt ~/rpicfgbackup &> /dev/null
             sudo sed -i 's/ logo.nologo//g' /boot/cmdline.txt
         fi
     fi
@@ -204,10 +204,10 @@ function screen_resolution(){
 function resolution(){
     
     if [ ! -d "~/rpicfgbackup" ]; then
-        sudo mkdir -p ~/rpicfgbackup
+        sudo mkdir -p ~/rpicfgbackup &> /dev/null
     fi
     if [ ! -d "/boot/backup" ]; then
-        sudo mkdir -p /boot/backup
+        sudo mkdir -p /boot/backup &> /dev/null
     fi
     if [ "$1" == "restore" ]; then
         if [ ! -f "/boot/backup/config.txt" ]; then
@@ -222,8 +222,8 @@ function resolution(){
         if [[ "$testresolution" == *"hdmi_cvt=1024 600 60 3 0 0 0"* ]]; then
             dialog --infobox "Resolution already set" 3 30 ; sleep 3
         else
-            sudo cp --backup=numbered -v /boot/config.txt /boot/backup
-            sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup
+            sudo cp --backup=numbered -v /boot/config.txt /boot/backup &> /dev/null
+            sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup &> /dev/null
             dialog --infobox "Setting Resolution 1024 X 600" 3 35 ; sleep 3
         
             sudo sed -i 's/.*hdmi_group=1.*/hdmi_cvt=1024 600 60 3 0 0 0\n&/' /boot/config.txt
@@ -296,17 +296,30 @@ function gpio_shutdown(){
 }
 function gpio_sh(){
     if [ ! -d "~/rpicfgbackup" ]; then
-        sudo mkdir -p ~/rpicfgbackup
+        sudo mkdir -p ~/rpicfgbackup &> /dev/null
     fi
+    #test to see if configuration already exists in rc.local
     testgpio=`cat "/etc/rc.local"`
     if [[ "$testgpio" == *"shutdown.py"* ]]; then
         dialog --infobox "GPIO Shutdown script already installed" 3 50 ; sleep 3
-    else    
-        sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup
-        curl https://pie.8bitjunkie.net/shutdown/setup-shutdown.sh --output ~/setup-shutdown.sh
-        cd ~
-        sudo chmod +x setup-shutdown.sh
-        sudo ./setup-shutdown.sh
+    else
+        #backup rc.local
+        sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup &> /dev/null
+
+        #update packages and install python.gpio
+        sudo apt-get -y update 
+        sudo apt-get install --yes python-rpi.gpio python3-rpi.gpio </dev/null
+        
+        #make directory to place shutdown.py script
+        mkdir /home/pi/scripts &> /dev/null
+
+        #Download Script
+        curl -# "http://pie.8bitjunkie.net/shutdown/shutdown.py" > /home/pi/scripts/shutdown.py 
+
+        #start shutdown.py now to avoid requiring reboot
+        sudo python /home/pi/scripts/shutdown.py &> /dev/null &
+        
+        #modify /etc/rc.local to start script on boot
         sudo sed -i 's/^exit 0/#GPIO Shutdown script\n&/' /etc/rc.local 
         sudo sed -i 's/^exit 0/sudo python \/home\/pi\/scripts\/shutdown.py \&\n&/' /etc/rc.local 
         sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local 
@@ -340,26 +353,28 @@ function installbgm(){
 }
 function bgm_sh(){
     if [ ! -d "~/rpicfgbackup" ]; then
-        sudo mkdir -p ~/rpicfgbackup
+        sudo mkdir -p ~/rpicfgbackup &> /dev/null
     fi
     testbgm=`cat "/etc/rc.local"`
     if [[ "$testbgm" == *"BGM.py"* ]]; then
         dialog --infobox "BGM already installed" 3 30 ; sleep 3
     else
-        tar -zxvf ./BGM.tar.gz -C ../
-        sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup
-        cd ~
-        git clone https://github.com/madmodder123/retropie_music_overlay.git
+        tar -zxvf ./BGM.tar.gz -C ../ &> /dev/null
+        sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup &> /dev/null
+        cd ~/
+        #git clone https://github.com/madmodder123/retropie_music_overlay.git
+        git clone -b OGST-Beta https://github.com/madmodder123/retropie_music_overlay.git
         cd retropie_music_overlay/
+        sudo cp ./Pixel.otf /usr/share/fonts/opentype/
         sudo chmod +x BGM_Install.sh 
         ./BGM_Install.sh 
-        cp BGM.py ../
-        cd ../
         sudo chmod +x ./BGM.py
-   
+        cp BGM.py ../ 
         sudo sed -i 's/^exit 0/#BackGround Music\n&/' /etc/rc.local 
         sudo sed -i 's/^exit 0/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
         sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local
+        cp ~/RetroPie-Toolkit/BGM_Toggle.sh ~/RetroPie/retropiemenu/
+        tar -zxvf ~/RetroPie-Toolkit/icons.tar.gz -C ~/RetroPie/retropiemenu/
     fi
 }
 
@@ -399,7 +414,7 @@ function i2s(){
 
         dialog --backtitle "RetroPie Toolkit i2s" \
         --title "RetroPie Toolkit i2s" \
-        --yesno "${infoboxi2s}" 8 55
+        --yesno "${infoboxi2s}" 10 55
     
         # Get exit status
         # 0 means user hit [yes] button.
@@ -416,13 +431,13 @@ function i2s(){
 }
 function i2s_sh(){
     if [ ! -d "~/rpicfgbackup" ]; then
-        sudo mkdir -p ~/rpicfgbackup
+        sudo mkdir -p ~/rpicfgbackup &> /dev/null
     fi
     if [ ! -d "/boot/backup" ]; then
-        sudo mkdir -p /boot/backup
+        sudo mkdir -p /boot/backup &> /dev/null
     fi
-    sudo cp --backup=numbered -v /boot/config.txt /boot/backup
-    sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup
+    sudo cp --backup=numbered -v /boot/config.txt /boot/backup &> /dev/null
+    sudo cp --backup=numbered -v /boot/config.txt ~/rpicfgbackup &> /dev/null
     curl -sS https://raw.githubusercontent.com/adafruit/Raspberry-Pi-Installer-Scripts/master/i2samp.sh | bash
 }
 
