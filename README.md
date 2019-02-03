@@ -48,7 +48,12 @@ I am useing there work in my script.
 - Added: Hursty Themes Installer
     - https://github.com/RetroHursty69/HurstyThemes 
 - Added: i2s Menu update conrim running script if detected in rc.local
-- Fixed: BGM was installing as root 
+- Added: BGM_Toggel.sh menu 
+- Added: Volume Option to BGM_Toggle.sh menu
+- Added: new icon for BGM_Toggle menu
+- Fixed: BGM was installing with sudo 
+- Fixed: GPIO Shutdown function
+- Fixed: BGM font missing Pixel.otf
 
 **2/1/19**
 - Added: Bezel Project 
