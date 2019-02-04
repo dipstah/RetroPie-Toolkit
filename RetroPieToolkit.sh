@@ -410,23 +410,80 @@ function bgm_sh(){
             wget https://github.com/dipstah/RetroPie-Toolkit/raw/master/BGM.tar.gz
             tar -zxvf ./BGM.tar.gz -C ~/ &> /dev/null
         fi
+        wget https://github.com/dipstah/RetroPie-Toolkit/raw/master/icons.tar.gz
+        tar -zxvf ./icons.tar.gz -C ~/RetroPie/retropiemenu/ &> /dev/null 
+        
         sudo cp --backup=numbered -v /etc/rc.local ~/rpicfgbackup &> /dev/null
-        cd ~/
-        #git clone https://github.com/madmodder123/retropie_music_overlay.git
+        
+        sudo apt-get -y update
+        sudo apt-get install --yes imagemagick fbi 
+        sudo apt-get install --yes python-pygame     
+        
+        cd /tmp
         git clone -b OGST-Beta https://github.com/madmodder123/retropie_music_overlay.git
-        cd retropie_music_overlay/
-        sudo cp ./Pixel.otf /usr/share/fonts/opentype/
-        sudo chmod +x BGM_Install.sh 
-        ./BGM_Install.sh 
-        sudo chmod +x ./BGM.py
-        cp BGM.py ../ 
+        cd /tmp/retropie_music_overlay
+        
+        sudo chmod +x pngview
+        sudo cp pngview /usr/local/bin/
+        
+        ##### Add pixel font
+        sudo mkdir -p /usr/share/fonts/opentype
+        sudo cp Pixel.otf /usr/share/fonts/opentype/
+        
+        sudo chmod +x BGM.py
+        sudo chown pi:pi BGM.py
+        sudo chmod 0777 BGM.py  
+        cp BGM.py ~/
+        cd /tmp
+        wget https://github.com/dipstah/RetroPie-Toolkit/raw/master/BGM_Toggle.sh
+        cp /tmp/BGM_Toggle.sh ~/RetroPie/retropiemenu/
+        
         sudo sed -i 's/^exit 0/#BackGround Music\n&/' /etc/rc.local 
         sudo sed -i 's/^exit 0/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
         sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local
-        cp ~/RetroPie-Toolkit/BGM_Toggle.sh ~/RetroPie/retropiemenu/
-        cd /tmp
-        wget https://github.com/dipstah/RetroPie-Toolkit/raw/master/icons.tar.gz
-        tar -zxvf ./icons.tar.gz -C ~/RetroPie/retropiemenu/ &> /dev/null 
+        
+        if [ -f ~/RetroPie/retropiemenu/gamelist.xml ]; then
+            cp ~/RetroPie/retropiemenu/gamelist.xml /tmp
+        else
+            cp /opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml /tmp
+        fi
+    
+        if [ ! -f ~/RetroPie/retropiemenu/icons/BezelProject.png ]; then
+            cd /tmp
+            wget https://github.com/dipstah/RetroPie-Toolkit/raw/master/icons.tar.gz
+            tar -zxvf ./icons.tar.gz -C ~/RetroPie/retropiemenu/ &> /dev/null 
+        fi
+        cat /tmp/gamelist.xml |grep -v "</gameList>" > /tmp/templist.xml
+
+        ifexist=`cat /tmp/templist.xml |grep BGM_Toggle.sh |wc -l`
+        if [[ ${ifexist} > 0 ]]; then
+            echo "already in gamelist.xml" > /tmp/exists
+        else
+            echo "	<game>" >> /tmp/templist.xml
+            echo "      <path>./BGM_Toggle.sh</path>" >> /tmp/templist.xml
+            echo "      <name>Background Music</name>" >> /tmp/templist.xml
+            echo "      <desc>Toggles background music ON/OFF and Adjust Volume</desc>" >> /tmp/templist.xml
+            echo "      <image>./icons/BGM.png</image>" >> /tmp/templist.xml
+            echo "      <playcount>1</playcount>" >> /tmp/templist.xml
+            echo "      <lastplayed></lastplayed>" >> /tmp/templist.xml
+            echo "  </game>" >> /tmp/templist.xml
+            echo "</gameList>" >> /tmp/templist.xml
+            cp /tmp/templist.xml ~/RetroPie/retropiemenu/gamelist.xml
+        fi        
+        ##cd ~/
+        #git clone https://github.com/madmodder123/retropie_music_overlay.git
+        ##git clone -b OGST-Beta https://github.com/madmodder123/retropie_music_overlay.git
+        ##cd retropie_music_overlay/
+        ##sudo cp ./Pixel.otf /usr/share/fonts/opentype/
+        ##sudo chmod +x BGM_Install.sh 
+        ##./BGM_Install.sh 
+        ##sudo chmod +x ./BGM.py
+        ##cp BGM.py ../ 
+        ##sudo sed -i 's/^exit 0/#BackGround Music\n&/' /etc/rc.local 
+        ##sudo sed -i 's/^exit 0/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
+        ##sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local
+        #cp ~/RetroPie-Toolkit/BGM_Toggle.sh ~/RetroPie/retropiemenu/
+        #cd /tmp
     fi
 }
 
@@ -611,6 +668,13 @@ function hurstythemes(){
     fi
     infoboxhursty=
 }
+
+if [ ! -d "~/rpicfgbackup" ]; then
+    sudo mkdir -p ~/rpicfgbackup &> /dev/null
+fi
+if [ ! -d "/boot/backup" ]; then
+    sudo mkdir -p /boot/backup &> /dev/null
+fi
 
 SOURCE="${BASH_SOURCE[0]}"
 while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink

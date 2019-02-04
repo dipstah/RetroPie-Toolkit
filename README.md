@@ -43,7 +43,7 @@ I am useing there work in my script.
 - Add Icon for Bezel Project in RetroPie config menu
 
 ## Known Issues ##
-- When installing BGM the original BGM_Install.sh replaces the gamelist.xml removeing any other custom menu adds. 
+- ~~When installing BGM the original BGM_Install.sh replaces the gamelist.xml removeing any other custom menu adds.~~ 
 - ~~When installing Hursty Themes gamelist.xml not updated because scripts folder already existed~~
 
 
