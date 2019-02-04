@@ -42,9 +42,12 @@ I am useing there work in my script.
 - ~~Set Volume for BGM~~
 - Add Icon for Bezel Project in RetroPie config menu
 
+## Known Issues ##
+- ~~When installing BGM the original BGM_Install.sh replaces the gamelist.xml removeing any other custom menu adds.~~ 
+- ~~When installing Hursty Themes gamelist.xml not updated because scripts folder already existed~~
+
 ## Change Log
 
-<<<<<<< HEAD
 **2/3/19**
 - Added: Bezel install now updates gamelist.xml 
 - Added: Install to RetroPie executing script outside of the retropiemenu folder
@@ -53,8 +56,6 @@ I am useing there work in my script.
 - Change: download music and icons so project doesn't have to be cloned
 - Fixed: Hursty Themes original instal.sh crash due to scripts folder already existing, stopped using install.sh from            Hursty added to this script to check for the existence of folder. 
 
-=======
->>>>>>> parent of 63a0acf... BEzel, BGM, and Hursty Themes Updates
 **2/2/19**
 - Added: Hursty Themes Installer
     - https://github.com/RetroHursty69/HurstyThemes 
