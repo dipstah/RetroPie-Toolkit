@@ -38,9 +38,9 @@ I am useing there work in my script.
 - ~~new Background Music menu and icon to replace the one provided by madmodder123 BGM install~~
 - menu item for GPIO Shutdown with icon
 - Add Eazy-Hax-RetroPie-Toolkit
-- detect if Toolkit is running from retropie menu if not ask to install
+- ~~detect if Toolkit is running from retropie menu if not ask to install~~
 - ~~Set Volume for BGM~~
-- Add Icon for Bezel Project in RetroPie config menu
+- ~~Add Icon for Bezel Project in RetroPie config menu~~
 
 ## Known Issues ##
 - ~~When installing BGM the original BGM_Install.sh replaces the gamelist.xml removeing any other custom menu adds.~~ 
