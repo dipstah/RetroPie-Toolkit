@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-# BGM_Toggle.sh
-#############################################
-# Lets the user enable/disable the background music
-#############################################
+
+###################################################################
+#Script Name	: BGM_Toggle.sh
+#Description    :Script for enabling/disabling Background Music replaced 
+#                @madmodder123 original BGM_Toggle.sh for BGM
+#https://github.com/dipstah/RetroPie-Toolkit
+#madmodder123 BGM https://github.com/madmodder123/retropie_music_overlay
+#Author         :Mike White
+#Email         	:dipstah@dippydawg.net
+###################################################################
 function mainmenu(){
     if [ -f ~/DisableMusic ]; then
         bgmstatus="Enable Music (Disabled)"

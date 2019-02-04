@@ -1,29 +1,75 @@
 #!/bin/bash
-
+   
+###################################################################
+#Script Name	: RetroPieToolbox.sh
+#Description    :script for automating some opthions for RetroPie normally only done via cmdline
+#                This Script will automate modifying cmdline.txt and config.txt. disable boot txt and Raspberrys
+#                set screen resolution to 1024 X 600 for 7" LCD
+#                Install Xbox One Controller Drivers and much more 
 #
-#This Script will automate modifying cmdline.txt and config.txt. disable boot txt and Raspberrys
-#set screen resolution to 1024 X 600 for 7" LCD
-#Install Xbox One Controller Drivers and much more 
-#
-#I am in no way a developer/scripter if any of the scripting doesn't follow best practices please  
-#be patient I am still learning and wanted a repeatable way to setup the RetroPie. 
-#
+#                I am in no way a developer/scripter if any of the scripting doesn't follow best practices please  
+#                be patient I am still learning and wanted a repeatable way to setup the RetroPie. 
+#https://github.com/dipstah/RetroPie-Toolkit
+#Author         :Mike White
+#Email         	:dipstah@dippydawg.net
+###################################################################
 
-infobox= ""
-infobox="${infobox}___________________________________________________________________________\n\n"
-infobox="${infobox}\n"
-infobox="${infobox}RetroPie Toolbox\n\n"
-infobox="${infobox}\n"
-infobox="${infobox}This Toolbox is for enabling features on the RetroPie\n"
-infobox="${infobox}I wrote this so that I could setup new SD cards easily\n"
-infobox="${infobox}\n"
-infobox="${infobox}\n"
-infobox="${infobox}___________________________________________________________________________\n\n"
+function promptinst(){
+    infoboxpromptinst= ""
+    infoboxpromptinst="${infoboxpromptinst}__________________________________________________\n"
+    infoboxpromptinst="${infoboxpromptinst}\n"
+    infoboxpromptinst="${infoboxpromptinst}We noticed that this script is not in the retropiemenu.\n\n"
+    infoboxpromptinst="${infoboxpromptinst}would you like to install it to the retropie menu for future use?\n"
+    infoboxpromptinst="${infoboxpromptinst}\n\n"
 
-dialog --backtitle "RetroPie Toolkit" \
---title "RetroPie Toolkit" \
---msgbox "${infobox}" 15 80
-
+    dialog --backtitle "RetroPie Toolkit Install" \
+    --title "RetroPie Toolkit Install" \
+    --yesno "${infoboxpromptinst}" 11 55
+    
+    # Get exit status
+    # 0 means user hit [yes] button.
+    # 1 means user hit [no] button.
+    # 255 means user hit [Esc] key.
+    response=$?
+    case $response in
+        0) inst_sh ;;
+        1) dialog --infobox "Ok, Maybe next time." 3 35 ; sleep 3 ;;
+        255) dialog --infobox "Canceled, Moving on." 3 35 ; sleep 3 ;;
+    esac
+    infoboxxbox=
+}
+function inst_sh(){
+    sudo cp $DIR/RetroPieToolkit.sh /home/pi/RetroPie/retropiemenu/
+    sudo cp --backup=numbered -v /opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml ~/rpicfgbackup &> /dev/null
+    sudo cp --backup=numbered -v ~/RetroPie/retropiemenu/gamelist.xml ~/rpicfgbackup &> /dev/null
+    if [ ! -f ~/RetroPie/retropiemenu/icons/ToolBox.png ]; then
+        cd /tmp
+        wget https://github.com/dipstah/RetroPie-Toolkit/raw/master/icons.tar.gz
+        tar -zxvf ./icons.tar.gz -C ~/RetroPie/retropiemenu/ &> /dev/null 
+    fi
+    if [ -f ~/RetroPie/retropiemenu/gamelist.xml ]; then
+        cp ~/RetroPie/retropiemenu/gamelist.xml /tmp
+    else
+        cp /opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml /tmp
+    fi
+    cat /tmp/gamelist.xml |grep -v "</gameList>" > /tmp/templist.xml
+    
+    ifexist=`cat /tmp/templist.xml |grep RetroPieToolkit |wc -l`
+    if [[ ${ifexist} > 0 ]]; then
+        echo "already in gamelist.xml" > /tmp/exists
+    else
+        echo "	<game>" >> /tmp/templist.xml
+        echo "      <path>./RetroPieToolkit.sh</path>" >> /tmp/templist.xml
+        echo "      <name>RetroPie Toolkit</name>" >> /tmp/templist.xml
+        echo "      <desc>Various scripts for configuring RetroPie</desc>" >> /tmp/templist.xml
+        echo "      <image>./icons/Toolkit.png</image>" >> /tmp/templist.xml
+        echo "      <playcount>1</playcount>" >> /tmp/templist.xml
+        echo "      <lastplayed></lastplayed>" >> /tmp/templist.xml
+        echo "  </game>" >> /tmp/templist.xml
+        echo "</gameList>" >> /tmp/templist.xml
+        cp /tmp/templist.xml ~/RetroPie/retropiemenu/gamelist.xml
+    fi     
+}
 
 function main_menu() {
     local choice
@@ -378,7 +424,9 @@ function bgm_sh(){
         sudo sed -i 's/^exit 0/su pi -c '\''python \/home\/pi\/BGM.py \&'\''\n&/' /etc/rc.local
         sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local
         cp ~/RetroPie-Toolkit/BGM_Toggle.sh ~/RetroPie/retropiemenu/
-        tar -zxvf ~/RetroPie-Toolkit/icons.tar.gz -C ~/RetroPie/retropiemenu/
+        cd /tmp
+        wget https://github.com/dipstah/RetroPie-Toolkit/raw/master/icons.tar.gz
+        tar -zxvf ./icons.tar.gz -C ~/RetroPie/retropiemenu/ &> /dev/null 
     fi
 }
 
@@ -563,4 +611,31 @@ function hurstythemes(){
     fi
     infoboxhursty=
 }
+
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+if [ ! $DIR == "/home/pi/RetroPie/retropiemenu" ]; then
+    promptinst
+else
+    infobox= ""
+    infobox="${infobox}___________________________________________________________________________\n\n"
+    infobox="${infobox}\n"
+    infobox="${infobox}RetroPie Toolbox\n\n"
+    infobox="${infobox}\n"
+    infobox="${infobox}This Toolbox is for enabling features on the RetroPie\n"
+    infobox="${infobox}I wrote this so that I could setup new SD cards easily\n"
+    infobox="${infobox}\n"
+    infobox="${infobox}\n"
+    infobox="${infobox}___________________________________________________________________________\n\n"
+
+    dialog --backtitle "RetroPie Toolkit" \
+    --title "RetroPie Toolkit" \
+    --msgbox "${infobox}" 15 80
+fi
+
 main_menu 
