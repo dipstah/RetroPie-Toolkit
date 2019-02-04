@@ -50,12 +50,12 @@ I am useing there work in my script.
 ## Change Log
 
 **2/3/19**
-Added: Bezel install now updates gamelist.xml 
-Added: Install to RetroPie executing script outside of the retropiemenu folder
-Added: script header
-Change: BGM function dowlnload busic if the ~/BGM folder doesn't exist
-Change: download music and icons so project doesn't have to be cloned
-Fixed: Hursty Themes original instal.sh crash due to scripts folder already existing, stopped using install.sh from            Hursty added to this script to check for the existence of folder. 
+- Added: Bezel install now updates gamelist.xml 
+- Added: Install to RetroPie executing script outside of the retropiemenu folder
+- Added: script header
+- Change: BGM function dowlnload busic if the ~/BGM folder doesn't exist
+- Change: download music and icons so project doesn't have to be cloned
+- Fixed: Hursty Themes original instal.sh crash due to scripts folder already existing, stopped using install.sh from            Hursty added to this script to check for the existence of folder. 
 
 **2/2/19**
 - Added: Hursty Themes Installer
