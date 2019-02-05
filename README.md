@@ -36,7 +36,7 @@ I am useing there work in my script.
 - New Name not a big fan of using RetroPie Toolkit
 - configure RetroPie for OMXPlayer to play audio on bootup for splash screens
 - ~~new Background Music menu and icon to replace the one provided by madmodder123 BGM install~~
-- menu item for GPIO Shutdown with icon
+- ~~menu item for GPIO Shutdown with icon~~
 - Add Eazy-Hax-RetroPie-Toolkit
 - ~~detect if Toolkit is running from retropie menu if not ask to install~~
 - ~~Set Volume for BGM~~
@@ -50,11 +50,11 @@ I am useing there work in my script.
 ## Change Log
 
 **2/4/19**
-
 - Added: Reboot Prompts after selections that need reboots
 - Added: cleanup mess for some functions
 - Added: txt to i2s notification informing the need of a keyboard
 - Added: Set Volume for BGM to 0.20 after install default was 0.75
+- Added: gpioShutdown.sh menu
 
 **2/3/19**
 - Added: Bezel install now updates gamelist.xml 
