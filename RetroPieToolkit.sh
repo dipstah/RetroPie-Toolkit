@@ -399,6 +399,47 @@ function gpio_sh(){
         sudo sed -i 's/^exit 0/#GPIO Shutdown script\n&/' /etc/rc.local 
         sudo sed -i 's/^exit 0/sudo python \/home\/pi\/scripts\/shutdown.py \&\n&/' /etc/rc.local 
         sudo sed -i 's/^exit 0/ \n&/' /etc/rc.local 
+        
+        if [ ! -f /home/pi/RetroPie/retropiemenu/icons/power-button-icon-22.png ]; then 
+            wget -O /tmp/icons.tar.gz https://github.com/dipstah/RetroPie-Toolkit/raw/master/icons.tar.gz
+            tar -zxvf /tmp/icons.tar.gz -C ~/RetroPie/retropiemenu/ &> /dev/null
+            sudo rm /tmp/icons.tar.gz
+        fi
+        
+        wget -O /home/pi/RetroPie/retropiemenu/gpioShutdown.sh https://github.com/dipstah/RetroPie-Toolkit/raw/master/gpioShutdown.sh
+        
+        if [ -f ~/RetroPie/retropiemenu/gamelist.xml ]; then
+            sudo cp --backup=numbered -v ~/RetroPie/retropiemenu/gamelist.xml ~/rpicfgbackup &> /dev/null
+            cp ~/RetroPie/retropiemenu/gamelist.xml /tmp
+        else
+            sudo cp --backup=numbered -v /opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml  ~/rpicfgbackup &> /dev/null
+            cp /opt/retropie/configs/all/emulationstation/gamelists/retropie/gamelist.xml /tmp
+        fi
+
+        cat /tmp/gamelist.xml |grep -v "</gameList>" > /tmp/templist.xml
+
+        ifexist=`cat /tmp/templist.xml |grep gpioShutdown |wc -l`
+        if [[ ${ifexist} > 0 ]]; then
+            echo "already in gamelist.xml" > /tmp/exists
+        else
+            echo "    <game>" >> /tmp/templist.xml
+            echo "        <path>./gpioShutdown.sh</path>" >> /tmp/templist.xml
+            echo "        <name>GPIO Shutdown Utility</name>" >> /tmp/templist.xml
+            echo "        <desc>RetroPie GPIO Power Shutdown Utility
+The GPIO shutdown script has already been installed on this base image. 
+
+this script will allow a momentary pushbutton to power on or power off the Raspberry Pi. 
+
+The script is setup to have the pushbutton wired to GPIO pins 5 and 6. 
+
+One press will shutdown and one press will power back on. </desc>" >> /tmp/templist.xml
+            echo "        <image>./icons/power-button-icon-22.png</image>" >> /tmp/templist.xml
+            echo "        <playcount>1</playcount>" >> /tmp/templist.xml
+            echo "        <lastplayed></lastplayed>" >> /tmp/templist.xml
+            echo "    </game>" >> /tmp/templist.xml
+            echo "</gameList>" >> /tmp/templist.xml
+            cp /tmp/templist.xml ~/RetroPie/retropiemenu/gamelist.xml
+        fi
     fi
 }
 
