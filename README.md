@@ -45,14 +45,22 @@ I am useing there work in my script.
 ## Known Issues ##
 - ~~When installing BGM the original BGM_Install.sh replaces the gamelist.xml removeing any other custom menu adds.~~ 
 - ~~When installing Hursty Themes gamelist.xml not updated because scripts folder already existed~~
+- On occasion the RetroPie splash screen appears when loading one of the menues. 
 
 ## Change Log
+
+**2/4/19**
+
+- Added: Reboot Prompts after selections that need reboots
+- Added: cleanup mess for some functions
+- Added: txt to i2s notification informing the need of a keyboard
+- Added: Set Volume for BGM to 0.20 after install default was 0.75
 
 **2/3/19**
 - Added: Bezel install now updates gamelist.xml 
 - Added: Install to RetroPie executing script outside of the retropiemenu folder
 - Added: script header
-- Change: BGM function dowlnload busic if the ~/BGM folder doesn't exist
+- Change: BGM function dowlnload music if the ~/BGM folder doesn't exist
 - Change: download music and icons so project doesn't have to be cloned
 - Fixed: Hursty Themes original instal.sh crash due to scripts folder already existing, stopped using install.sh from            Hursty added to this script to check for the existence of folder. 
 
